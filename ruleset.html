@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- LOAD JQUERY -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <!-- LOAD ANGULAR -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
+    <script src="js/guvnah-ruleset.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/bootstrap-modal.js"></script>
+    <script src="js/bootstrap-modalmanager.js"></script>
+    <script src="js/angular-ui-bootstrap-0.10.0-min.js"></script>
+    <link rel="stylesheet" href="css/guvnah.css"/>
+    
+    <!-- LOAD BOOTSTRAP CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"-->
+  </head>
+
+<body ng-app="rulesetModule" ng-controller="rulesetController">
+
+  <div class="container col-sm-4">
+    
+    <!-- PAGE TITLE -->
+    <div class="page-header">
+      <h3>
+        <span class="glyphicon glyphicon-chevron-left"></span>HTML Validation Tool<span class="glyphicon glyphicon-chevron-right"></span>
+      </h3>
+    </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1 class="panel-title">Title: {{ruleset.title}}</h1>
+            </div>
+            <div class="panel panel-body">
+                Description: {{ruleset.description}}
+                <br/>
+                URL: <a ng-href="{{ruleset.url}}" target="new">{{ruleset.url}}</a>
+            </div>
+            <div ng-repeat="ruleSetGroup in ruleset.ruleSetGroups">
+                <div class="panel panel-body">
+                    <h2 class="panel-title">{{ruleSetGroup.title}}</h2>
+                    <div ng-repeat="rule in ruleSetGroup.rules">
+                        <div class="panel panel-body">
+                            RULE {{rule.ruleId}}<br/>
+                            Tag: {{rule.tagName}}<br/>
+                            Level: {{rule.confidence}}<br/>
+                            Name: {{rule.name}}<br/>
+                            Description: {{rule.description}}<br/>
+                            Checks:
+                            <div ng-repeat="check in rule.checks">
+                                <div class="panel panel-body">
+                                    {{check.index}}: {{check.description}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-repeat="ruleSetSubGroup in ruleSetGroup.ruleSetGroups">
+                        <div class="panel panel-body">
+                            {{ruleSetSubGroup.title}}
+                            <h3 class="panel-title"><span class="badge">{{ruleSetSubGroup.rules.length}}</span> Rules</h3>
+                            <div ng-repeat="rule in ruleSetSubGroup.rules">
+                                <div class="panel panel-body">
+                                    <h4>RULE {{rule.ruleId}}</h4>
+                                    Tag: {{rule.tagName}}<br/>
+                                    Level: {{rule.confidence}}<br/>
+                                    Name: {{rule.name}}<br/>
+                                    Description: {{rule.description}}<br/>
+                                    Checks:
+                                    <div ng-repeat="check in rule.checks">
+                                        <div class="panel panel-body">
+                                            <div ng-repeat="(key, value) in check|filter: key!='description'">
+                                                {{key}}: {{value}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+</html>
