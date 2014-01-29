@@ -2,7 +2,6 @@ var checkformModule = angular.module('checkformModule', ['ui.bootstrap'])
 .controller('checkformController', function($scope, $http, $modal, $log) {
 //var checkFormController = function($scope, $modal, $log, $http) {
         $scope.formData = {"level":"ERROR", "platform":"DESKTOP", "sort":"RULE", "wcag2a":true};
-        $scope.htmlline = 'NADA';
 
         $scope.render = function(e) {
             return $(e).html();
@@ -108,6 +107,7 @@ var checkformModule = angular.module('checkformModule', ['ui.bootstrap'])
       $scope.selectedlines = [];
       $scope.minline = ((element.lineNumber - 10) > 0) ? (element.lineNumber - 10) : 0;
       $scope.maxline = ((element.lineNumber + 10) < lines.length) ? (element.lineNumber + 10) : lines.length;
+      $scope.trimmedvalue = (element.value.length>100) ? (element.value.substr(0, 95) + ". . . ") : element.value;
      
       var counter = 0;
       for(var i=$scope.minline; i<$scope.maxline; i++) {
@@ -115,13 +115,17 @@ var checkformModule = angular.module('checkformModule', ['ui.bootstrap'])
         counter++;
       }
 
-      $scope.ok = function () {
-        $modalInstance.close();
-      };
-
       $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
       };
+
+      $scope.getClass = function(lineNumber) {
+        if(lineNumber = $scope.currentLine) {
+            return "error";
+        } else {
+            return "";
+        }
+      } 
 
     };
  

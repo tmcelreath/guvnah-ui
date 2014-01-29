@@ -34,7 +34,6 @@
         <span class="glyphicon glyphicon-chevron-left"></span>HTML Validation Tool<span class="glyphicon glyphicon-chevron-right"></span>
       </h3>
     </div>
-    {{htmlline}}
     <form ng-submit="submitForm()">
       <div class="col-sm-4">
         <label for="url">URL</label> <a data-toggle="collapse" data-parent="#accordion" href="#authfields">
@@ -127,10 +126,9 @@
       <div ng-if="result.key.ruleSetName"> 
         <div class="panel panel-default">
           <div class="panel-heading">
-          <a style="text-decoration: none; color:#00000" data-toggle="collapse" data-parent="#accordion" href="{{ '#result-' + $index }}">
+          <a style="text-decoration: none; hover:#00000" data-toggle="collapse" data-parent="#accordion" href="{{ '#result-' + $index }}">
             <h3 class="panel-title">
-              <!--<a data-toggle="collapse" data-parent="#accordion" href="{{ '#result-' + $index }}">-->
-                <span class="glyphicon glyphicon-circle-arrow-down"></span><!--</a>-->
+                <span class="glyphicon glyphicon-circle-arrow-down"></span>
               <span ng-if="result.key.level=='ERROR'">
                 <span class="label label-danger">ERROR</span> 
               </span>
@@ -151,16 +149,12 @@
             </a>
           </div>
           <div id="{{ 'result-' + $index }}" class="panel-collapse collapse">
-          <div ng-repeat="value in result.value" class="panel-body">
-            <li class="list-group-item">
-                <!--<a data-toggle="modal"  ng-click="open()" ng-href="#myModal">-->
-                <!--<span ng-click="openHtmlSummary(value.lineNumber)">-->
-                <span ng-click="openHtmlSummary(result.key, value)">
-                [{{value.lineNumber}}, {{value.columnNumber}}]
-                </span>
-                {{value.value}}
-             </li>
-          </div>
+            <div ng-repeat="value in result.value">
+              <li class="list-group-item">
+                  <a href="" ng-click="openHtmlSummary(result.key, value)">[{{value.lineNumber}}, {{value.columnNumber}}]</a>
+                  {{value.value}}
+               </li>
+            </div>
           </div>
         </div>
 
@@ -169,47 +163,50 @@
       <div ng-if="result.key.lineNumber"> 
         <div class="panel panel-default">
           <div class="panel-heading">
+          <a style="text-decoration: none; hover:#00000" data-toggle="collapse" data-parent="#accordion" href="{{ '#result-' + $index }}">
             <h3 class="panel-title">
-              <a data-toggle="collapse" data-parent="#accordion" href="{{ '#' + $index }}">
-                <span class="glyphicon glyphicon-circle-arrow-down"></span>
-              </a>
+              <span class="glyphicon glyphicon-circle-arrow-down"></span>
               <span class="badge">{{result.value.length}}</span>
-              <a data-toggle="modal" href="#myModal">
                 [{{result.key.lineNumber}}, {{result.key.columnNumber}}] 
-              </a>
               <span class="glyphicon glyphicon-chevron-right"></span>
                 {{result.key.value}}
             </h3>
+            </a>
           </div>
-          <div ng-repeat="value in result.value" class="panel-body">
-             <li class="list-group-item">
-              <span ng-if="value.level=='ERROR'">
-                <span class="label label-danger">ERROR</span> 
-              </span>
-              <span ng-if="value.level=='LIKELY'">
-                <span class="label label-warning">WARNING</span>
-              </span>
-              <span ng-if="value.level=='POTENTIAL'">
-                <span class="label label-info">INFO</span>
-              </span>
-              {{value.ruleSetName}}
-              <span class="glyphicon glyphicon-chevron-right"></span>
-              {{value.ruleSetGroupDescription}}
-              <span class="glyphicon glyphicon-chevron-right"></span>
-              {{value.ruleSetSubGroupDescription}}
-              <br/>
-              {{value.ruleName}}
-             </li>
+          <div id="{{ 'result-' + $index }}" class="panel-collapse collapse">
+            <div ng-repeat="value in result.value" class="panel-body">
+               <li class="list-group-item">
+                <a href="" ng-click="openHtmlSummary(value, result.key)" style="text-decoration: none; hover:#00000">
+                <span ng-if="value.level=='ERROR'">
+                  <span class="label label-danger">ERROR</span> 
+                </span>
+                <span ng-if="value.level=='LIKELY'">
+                  <span class="label label-warning">WARNING</span>
+                </span>
+                <span ng-if="value.level=='POTENTIAL'">
+                  <span class="label label-info">INFO</span>
+                </span>
+                {{value.ruleSetName}}
+                </a>
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                {{value.ruleSetGroupDescription}}
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                {{value.ruleSetSubGroupDescription}}
+                <br/>
+                {{value.ruleName}}
+               </li>
+            </div>
           </div>
         </div>
       </div>
-
+<!--
       <div ng-if="result.key.lineNumber">
          <pre><a data-toggle="modal" href="#myModal">[LINE {{result.key.lineNumber}} COL {{result.key.columnNumber}}]</a> [{{result.key.tagName}}] ({{result.value.length}}) {{result.key.value}}</pre>
          <div ng-repeat="value in result.value">
             [{{value.level}}], {{value.ruleSetName}}: {{value.ruleSetGroupDescription}} {{value.ruleSetSubGroupDescription}}: {{value.ruleName}}
          </div>
       </div>
+-->
   </div>
   <br/>
  
@@ -217,7 +214,7 @@
   <div ng-controller="HtmlSummaryCtrl" class="modal-large">
       <script type="text/ng-template" id="htmlSummary.html">
           <div class="modal-header">
-              <h5>[{{element.lineNumber}}, {{element.columnNumber}}] {{element.value}}</h5>
+              <h5>[{{element.lineNumber}}, {{element.columnNumber}}] {{trimmedvalue}}</h5>
               <h5>
               <span ng-if="rule.level=='ERROR'">
                 <span class="label label-danger">ERROR</span> 
@@ -235,24 +232,34 @@
               <span class="glyphicon glyphicon-chevron-right"></span>
                 {{rule.ruleSetSubGroupDescription}}
               </h5>
+              <h5>
                 {{rule.ruleName}}
-                <br/>
+              </h5>  
+                <span ng-if="element.tagName=='img'">
+                  <div class="span4">
+                    <span class="span1">Image: </span>
+                    <span class="span3"><img ng-src="{{element.attrs.src}}" /></span>
+                  </div>
+                  <div class=span4/>
+                    <span class="span1">Image Soruce: </span>
+                    <span class="span3">{{element.attrs.src}}</span>
+                  </div>
+                </span>
           </div>
           <div class="modal-body">
-              <table class="table table-striped table-bordered table-condensed">
+              <table class="table">
                 <thead>
                   <tr>
                     <th>LN#</th><th>HTML</th>
                   </tr>
                 </thead>
-                <tr ng-repeat="line in selectedlines">
-                  <td>[{{ line.lineNumber }}]</td><td>{{line.value}}</td>
+                <tr ng-class="getClass(line.lineNumber)" ng-repeat="line in selectedlines">
+                  <td>[{{ line.lineNumber }}]</td><td><span class="error">{{line.value}}</span></td>
                 </tr>
               </table>
           </div>
           <div class="modal-footer">
-              <button class="btn btn-primary" ng-click="ok()">OK</button>
-              <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+              <button class="btn btn-primary" ng-click="cancel()">Close</button>
           </div>
       </script>
   </div>
